@@ -1,7 +1,6 @@
 import dbConnect from '../../lib/dbConnect';
 import Concern from '../../models/Concern';
 import ConcernTreatment from '../../models/ConcernTreatment';
-import Treatment from '../../models/Treatment';
 import Package from '../../models/Package';
 
 export default async function handler(req, res) {
@@ -9,20 +8,27 @@ export default async function handler(req, res) {
   const concernQuery = req.query.concern?.trim() || '';
   if (!concernQuery) return res.status(400).json({ error: 'Concern required' });
 
-  // Perform a case-insensitive search using a regular expression
-  const concern = await Concern.findOne({ name: { $regex: `^${concernQuery}$`, $options: 'i' } });
+  // Create a case-insensitive regular expression from the user's query
+  const queryRegex = new RegExp(`^${concernQuery}$`, 'i');
+
+  // Search for a concern where the name OR one of the synonyms matches the query
+  const concern = await Concern.findOne({
+    $or: [
+      { name: queryRegex },
+      { synonyms: queryRegex }
+    ]
+  });
 
   if (!concern) return res.json({ concern: null, treatments: [], packages: [] });
 
   const concernTreatments = await ConcernTreatment.find({ concern: concern._id }).populate('treatment');
   const treatments = concernTreatments.map(ct => ct.treatment);
 
-  // Get all packages for these treatments
-  const packages = await Package.find({ treatment: { $in: treatments.map(t => t._id) } })
-    .populate('treatment');
+  const packages = await Package.find({ treatment: { $in: treatments.map(t => t._id) } }).populate('treatment');
 
   res.json({
-    concern,
+    // Return the official concern name, even if a synonym was used
+    concern: { name: concern.name }, 
     treatments,
     packages
   });
