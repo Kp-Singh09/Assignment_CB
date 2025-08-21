@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import PackageCard from '../components/PackageCard';
 import toast from 'react-hot-toast';
 
-// Add your slideshow image filenames here
 const slideshowImages = [
   '/hero-bg.jpg',
   '/hero-bg-1.jpg',
@@ -71,14 +70,14 @@ export default function Home() {
     <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)] bg-white">
-          {/* Left Side: Content & Search */}
           <div className="w-full md:w-1/2 flex flex-col justify-center py-8">
             <div className="max-w-lg">
               <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4 leading-tight">
                 Find expert care for your skin & hair.
               </h1>
               <p className="text-lg text-gray-600 mb-8">
-                Tell us your concern, and we'll connect you with top-rated clinics and personalized treatment packages.
+                {/* Changed "we'll" to "we&rsquo;ll" */}
+                Tell us your concern, and we&rsquo;ll connect you with top-rated clinics and personalized treatment packages.
               </p>
               <form onSubmit={handleSearch} className="space-y-4">
                 <input
@@ -90,7 +89,6 @@ export default function Home() {
                 />
                 {predefinedConcerns.length > 0 && (
                   <div className="flex flex-wrap gap-2 pt-1">
-                    {/* The .slice() method has been removed here to show all concerns */}
                     {predefinedConcerns.map(suggestion => (
                       <button
                         key={suggestion._id}
@@ -114,7 +112,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Side: Visual with Fading Slideshow */}
           <div className="w-full md:w-1/2 min-h-[50vh] md:min-h-full relative overflow-hidden">
             {slideshowImages.map((src, index) => (
               <div
@@ -130,21 +127,20 @@ export default function Home() {
         </div>
       </div>
       
-      {/* Loading Spinner */}
       {isLoading && (
         <div className="text-center py-20">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
         </div>
       )}
 
-      {/* Results Section */}
       <div ref={resultsRef}>
         {result && !isLoading && (
           <div id="results" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             {result.concern && result.packages.length > 0 ? (
               <div className="space-y-10">
                 <div className="text-center">
-                  <h2 className="text-3xl font-bold text-gray-800">Results for "{result.concern.name}"</h2>
+                   {/* Changed quotes to &ldquo; and &rdquo; */}
+                  <h2 className="text-3xl font-bold text-gray-800">Results for &ldquo;{result.concern.name}&rdquo;</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {result.packages.map(pkg => <PackageCard key={pkg._id} pkg={pkg} />)}
@@ -153,7 +149,10 @@ export default function Home() {
             ) : (
               <div className="text-center py-12 bg-white rounded-lg shadow-md">
                 <h3 className="text-2xl font-semibold text-gray-800 mb-2">No Results Found</h3>
-                <p className="text-gray-500">We couldn't find any packages for "{concern}". Please try another concern.</p>
+                <p className="text-gray-500">
+                  {/* Changed "couldn't" and quotes */}
+                  We couldn&rsquo;t find any packages for &ldquo;{concern}&rdquo;. Please try another concern.
+                </p>
               </div>
             )}
           </div>
